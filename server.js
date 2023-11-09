@@ -53,6 +53,12 @@ myDB(async client => {
     });
   });
 
+  app.route('/login').post(passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
+    res.redirect('/profile');
+  });
+
+  app.route('/profile').get((req, res) => { res.render('profile'); });
+
   passport.serializeUser((user, done) => {
     done(null, user._id);
   });
@@ -65,7 +71,7 @@ myDB(async client => {
 
 }).catch(e => {
   app.route('/').get((req, res) => {
-    res.render('index', { title: e, message: `Unable to connect to database... ${URI}` });
+    res.render('index', { title: e, message: `Unable to connect to database` });
   });
 });
 
