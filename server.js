@@ -48,7 +48,8 @@ myDB(async client => {
   app.route('/').get((req, res) => {
     res.render('index', {
       title: 'Connected to Database',
-      message: 'Please log in'
+      message: 'Please log in',
+      showLogin: true
     });
   });
 
