@@ -8,7 +8,7 @@ const passport = require('passport');
 const { ObjectID } = require('mongodb');
 const URI = process.env.MONGO_URI;
 const LocalStrategy = require('passport-local');
-const { hash } = require('bcrypt');
+const bcrypt = require('bcrypt');
 
 const app = express();
 
@@ -31,8 +31,6 @@ app.use('/public', express.static(process.cwd() + '/public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const hash = bcrypt.hashSync(req.body.password, 12);
-
 //app logic
 myDB(async client => {
   const myDataBase = await client.db('database').collection('users');
@@ -51,19 +49,12 @@ myDB(async client => {
     res.redirect('/profile');
   });
 
-  //middleware to check if user is authenticated
-  function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-      return next();
-    }
-    res.redirect('/');
-  };
-
   app.route('/profile').get(ensureAuthenticated, (req, res) => { 
     res.render('profile', { username: req.user.username }); 
   });
 
   app.route('/register').post((req, res, next) => {
+    const hash = bcrypt.hashSync(req.body.password, 12);
     myDataBase.findOne({ username: req.body.username }, (err, user) => {
       if (err) next(err);
       else if (user) res.redirect('/');
@@ -128,7 +119,13 @@ app.use((req, res, next) => {
   });
 });
 
-
+  //middleware to check if user is authenticated
+  function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      return next();
+    }
+    res.redirect('/');
+  };
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
