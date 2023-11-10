@@ -47,7 +47,15 @@ myDB(async client => {
     res.redirect('/profile');
   });
 
-  app.route('/profile').get((req, res) => { 
+  //middleware to check if user is authenticated
+  function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      return next();
+    }
+    res.redirect('/');
+  };
+
+  app.route('/profile').get(ensureAuthenticated, (req, res) => { 
     res.render('profile'); 
   });
 
@@ -70,7 +78,7 @@ myDB(async client => {
       done(null, doc);
     });
   });
-  
+
 //error handling
 }).catch(e => {
   app.route('/').get((req, res) => {
