@@ -25,18 +25,12 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
-
-const username = req.user;
-console.log(`User ${username} attempted to log in.`);
-
-
 fccTesting(app); // For fCC testing purposes
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//app logic
 myDB(async client => {
   const myDataBase = await client.db('database').collection('users');
 
@@ -48,11 +42,14 @@ myDB(async client => {
     });
   });
 
+
   app.route('/login').post(passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
     res.redirect('/profile');
   });
 
-  app.route('/profile').get((req, res) => { res.render('profile'); });
+  app.route('/profile').get((req, res) => { 
+    res.render('profile'); 
+  });
 
   passport.use(new LocalStrategy((username, password, done) => {
     myDataBase.findOne({ username: username }, (err, user) => {
@@ -73,7 +70,8 @@ myDB(async client => {
       done(null, doc);
     });
   });
-
+  
+//error handling
 }).catch(e => {
   app.route('/').get((req, res) => {
     res.render('index', { title: e, message: `Unable to connect to database` });
