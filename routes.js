@@ -9,10 +9,10 @@ module.exports = function (app, myDataBase) {
           title: 'Connected to Database',
           message: 'Please log in',
           showLogin: true,
-          showRegistration: true
+          showRegistration: true,
+          showSocialAuth: true
         });
       });
-    
     
       app.route('/login').post(passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
         res.redirect('/profile');
@@ -52,6 +52,12 @@ module.exports = function (app, myDataBase) {
         req.logout();
         res.redirect('/');
     });
+
+    //social authentication routes
+    app.route('/auth/github').get(passport.authenticate('github'));
+    app.route('/auth/github/callback').get(passport.authenticate('github', { failureRedirect: '/' }), (req, res) => {
+      res.redirect('/profile');
+    })
     
     app.use((req, res, next) => {
       res.status(404)
