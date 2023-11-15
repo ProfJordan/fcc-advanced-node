@@ -23,7 +23,7 @@ app.set('views', './views/pug');
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
-  secret: secret,
+  // secret: secret,
   resave: true,
   saveUninitialized: true,
   cookie: { secure: false },
@@ -44,7 +44,7 @@ io.use(
     cookieParser: cookieParser,
     key: 'express.sid',
     secret: process.env.SESSION_SECRET,
-    secret: secret,
+    // secret: secret,
     store: store,
     success: onAuthorizeSuccess,
     fail: onAuthorizeFail
