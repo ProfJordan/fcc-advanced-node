@@ -70,7 +70,7 @@ myDB(async client => {
         username: socket.request.user.username,
         message
       });
-    }
+    });
     console.log('A user has connected');
 
     socket.on('disconnect', () => {
