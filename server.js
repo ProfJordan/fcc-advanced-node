@@ -8,10 +8,11 @@ const passport = require('passport');
 const URI = process.env.MONGO_URI;
 const routes = require('./routes.js');
 const auth = require('./auth.js');
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
 
 const app = express();
+
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 
 app.set('view engine', 'pug');
 app.set('views', './views/pug');
@@ -37,6 +38,12 @@ myDB(async client => {
   const myDataBase = await client.db('database').collection('users');
   routes(app, myDataBase);
   auth(app, myDataBase);
+
+  //socket.io logic
+io.on('connection', socket => {
+  console.log('A user has connected');
+});
+
 //error handling
 }).catch(e => {
   app.route('/').get((req, res) => {
@@ -47,7 +54,4 @@ myDB(async client => {
 const PORT = process.env.PORT || 3000;
 http.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
-  io.on('connection', socket => {
-    console.log('A user has connected');
-  });
 });

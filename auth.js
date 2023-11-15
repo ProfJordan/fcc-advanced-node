@@ -32,7 +32,7 @@ module.exports = function (app, myDataBase) {
   passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: '/auth/github/callback'
+    callbackURL: 'https://fcc-advanced-node-ea080df46c83.herokuapp.com//auth/github/callback'
   },
     function(accessToken, refreshToken, profile, cb) {
       console.log(profile);
